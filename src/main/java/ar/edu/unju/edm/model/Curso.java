@@ -39,6 +39,14 @@ public class Curso {
 	@Positive(message="El cupo debe ser positivo")
 	private int cupo;
 
+	private Boolean estado;
+	
+	public Boolean getEstado() {
+		return estado;
+	}
+	public void setEstado(Boolean estado) {
+		this.estado = estado;
+	}
 	public Curso() {
 		// TODO Auto-generated constructor stub
 	}

@@ -1,9 +1,0 @@
-@charset "ISO-8859-1";
-
-body {
-  height: 400px;
- /* background-image: url("/img/hero_1.jpg");*/
-background-size: cover;
-  background-repeat:no-repeat;
-  background-position: center center;
-}

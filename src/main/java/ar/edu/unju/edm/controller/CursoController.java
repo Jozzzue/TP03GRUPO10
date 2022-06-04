@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.unju.edm.model.Curso;
-import ar.edu.unju.edm.until.ListaCursos;
+import ar.edu.unju.edm.service.ICursoService;
+
 
 
 
@@ -32,14 +33,15 @@ public class CursoController {
 	Curso nuevoCurso;
 	
 	@Autowired
-	ListaCursos listadoCursos;
+	ICursoService cursoService;
 	
 	// cargar cursos
 		@GetMapping({"/otroCurso"})	
 		public ModelAndView addCourse() {
+			LOGGER.info("ingresando al metodo: addCourse");
 			ModelAndView vista = new ModelAndView("cargarcurso");
 			vista.addObject("curso", nuevoCurso);
-			vista.addObject("band", "false");
+			vista.addObject("band",false);
 			return vista;
 		}
 		
@@ -50,67 +52,88 @@ public class CursoController {
 			if(result.hasErrors()) {
 				LOGGER.fatal("Error de validacion");
 				model.addAttribute("curso", coursetosave);
+				model.addAttribute("band", false);
 				return "cargarcurso";
 			}
-			    coursetosave.setId(listadoCursos.getListado().size());
-				listadoCursos.getListado().add(coursetosave);
-				return "redirect:/otroCurso";
+			
+			
+			try {
+				cursoService.guardarCurso(coursetosave);
+			}catch(Exception e) {
+				model.addAttribute("formCourseMessage", e.getMessage());
+				model.addAttribute("curso", coursetosave);
+				model.addAttribute("band", false);
+				LOGGER.error("saliendo del metodo: saveCourse");
+				return "cargarusuario";
+			}
+			model.addAttribute("formCourseMessage", "Curso guardado correctamente");
+			model.addAttribute("curso", nuevoCurso);	 
+			model.addAttribute("band", false);
+			LOGGER.error("saliendo del metodo: saveCourse");
+				return "cargarcurso";
 		}
 		
 		// listar cursos
 		@GetMapping({"/listarCursos"})	
 		public ModelAndView listCourse() {
 			ModelAndView vista = new ModelAndView("mostrarcursos");
-			vista.addObject("listacursos", listadoCursos.getListado());
+			if(cursoService.listarCursos().size()!=0) {
+				vista.addObject("listacursos", cursoService.listarCursos());
+				LOGGER.info("ingresando al metodo: listUsers "+cursoService.listarCursos().size());
+			}
 			return vista;
 		}
 		
-		// modificar cursos
-		@RequestMapping("/editecourse/{id}")
-		public ModelAndView modCourse(@PathVariable(name="id") int id) { 
+		// modificar curso
+		@RequestMapping("/editeCourse/{id}")
+		public ModelAndView modCourse(@PathVariable(name="id") int id) throws Exception { 
 			Curso coursetomod = new Curso();
-			for(int i=0 ;i <  listadoCursos.getListado().size(); i++ ) { 
-				if(listadoCursos.getListado().get(i).getId() == id)
-					coursetomod = listadoCursos.getListado().get(i);
-			}
-			
+			coursetomod = cursoService.buscarCurso(id);
 			ModelAndView coursemod = new ModelAndView("cargarcurso");
 		    coursemod.addObject("curso", coursetomod);
-		    coursemod.addObject("band", "true");
+		    LOGGER.error("saliendo del metodo: modCourse "+ coursetomod.getNombre());
+		    coursemod.addObject("band",true);
 		    return coursemod;
 		}
 		
 		//actualizar curso
-		@PostMapping("/modificarCurso")
-		public String savemodUser(@Valid @ModelAttribute ("curso") Curso cursoparamod, BindingResult result, Model model) {
-			
+		@PostMapping("/editarCurso")
+		public ModelAndView savemodCourse(@Valid @ModelAttribute ("curso") Curso cursoparamod, BindingResult result) {
 			if(result.hasErrors()) {
 				LOGGER.fatal("Error de validacion");
-				model.addAttribute("curso", cursoparamod);
-				model.addAttribute("band", "true");
-				return "cargarcurso";
+				ModelAndView vista = new ModelAndView("cargarcurso");
+				vista.addObject("curso", cursoparamod);
+				vista.addObject("band",true);
+				return vista;
 			}
-			for(int i=0 ;i <  listadoCursos.getListado().size(); i++ ) { 
-				if(listadoCursos.getListado().get(i).getId() == cursoparamod.getId())
-					listadoCursos.getListado().set(i, cursoparamod);
+			try {
+				cursoService.modificarCurso(cursoparamod);
+			}catch(Exception e){
+				ModelAndView vista = new ModelAndView("cargarcurso");
+				vista.addObject("formCourseMessage", e.getMessage());
+				vista.addObject("curso", cursoparamod);
+				vista.addObject("band",true);
+				LOGGER.error("saliendo del metodo: savemodCourse");
+				return vista;
 			}
-		
-			return "redirect:/listarCursos";
+				ModelAndView vista = new ModelAndView("mostrarcursos");
+				vista.addObject("listacursos", cursoService.listarCursos());	
+				vista.addObject("formCourseMessage","Curso modificado Correctamente");
+			return vista;
 		}
 		
 		
 		// eliminar cursos
-		@RequestMapping("/deletecourse/{id}")
-		public String deleteCourse(@PathVariable(name="id") int id) {
-			for(int i=0 ;i <  listadoCursos.getListado().size(); i++ ) {
-				if(listadoCursos.getListado().get(i).getId() == id)
-				{
-					listadoCursos.getListado().remove(i);
-					System.out.println("Tamaño del listado: " + listadoCursos.getListado().size());
-				}
-					
+		@RequestMapping("/deleteCourse/{id}")
+		public String deleteCourse(@PathVariable(name="id") int id, Model model) {
+			try {
+				cursoService.eliminarCurso(id);
+			}catch(Exception e){
+				LOGGER.error("encontrando: curso a eliminar");
+				model.addAttribute("formCourseMessage", e.getMessage());
+				return "redirect:/otroCurso";
 			}
-		    	
+		
 		    return "redirect:/listarCursos";
 		}
 }

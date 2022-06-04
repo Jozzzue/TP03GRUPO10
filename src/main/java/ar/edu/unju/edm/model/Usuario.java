@@ -41,7 +41,15 @@ public class Usuario {
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate fechanacimiento;
 	
+	private Boolean estado;
+	
 
+	public Boolean getEstado() {
+		return estado;
+	}
+	public void setEstado(Boolean estado) {
+		this.estado = estado;
+	}
 	public int getDni() {
 		return dni;
 	}
