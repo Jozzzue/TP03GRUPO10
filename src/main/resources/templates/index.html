@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th ="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Trabajo Práctico N°3</title>
+
+<link th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}"  rel="stylesheet" type="text/css">
+<link th:href="@{/css/miEstilo.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+	<div th:insert="/layouts/header :: header"></div>
+    <div class="site-mobile-menu">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close mt-3">
+          <span class="icon-close2 js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+    
+    <header class="site-navbar" role="banner">
+
+      <div class="container">
+        <div class="row align-items-center">
+          
+          <div class="col-11 col-xl-2">
+            <h1 class="mb-0 site-logo"><a href="#" class="text-white mb-0">Menu</a></h1>
+          </div>
+          <div class="col-12 col-md-10 d-none d-xl-block">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+
+              <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+                <li class="active"><a href="/otroUsuario"><span>Cargar Usuario</span></a></li>
+                <li><a th:href="@{/listarUsuario}"><span>Listar Usuarios</span></a></li>
+                <li><a th:href="@{/otroCurso}"><span>Cargar Curso</span></a></li>
+                <li><a th:href="@{/listarCursos}"><span>Listar Curso</span></a></li>
+                <li class="has-children">
+              </ul>
+            </nav>
+          </div>
+
+
+          <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;"><a href="#" class="site-menu-toggle js-menu-toggle text-white"><span class="icon-menu h3"></span></a></div>
+
+          </div>
+        </div>
+           
+        
+      
+    </header>
+	
+
+</body>
+</html>
