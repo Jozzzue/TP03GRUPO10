@@ -84,7 +84,13 @@ public class UsuarioController {
 	@GetMapping("/update/{dni}")
 	public ModelAndView modUser(Model model, @PathVariable(name="dni") int dni) throws Exception {
 		Usuario usuarioEncontrado = new Usuario();
-		usuarioEncontrado = usuarioService.buscarUsuario(dni);	
+		try {
+			usuarioEncontrado = usuarioService.buscarUsuario(dni);		
+		}
+		catch (Exception e) {
+			model.addAttribute("formUsuarioErrorMessage", e.getMessage());
+		}
+		//usuarioEncontrado = usuarioService.buscarUsuario(dni);	
 		ModelAndView usermod = new ModelAndView("cargarusuario");
 	    usermod.addObject("usuario", usuarioEncontrado);
 	    LOGGER.error("saliendo del metodo: modUser "+ usuarioEncontrado.getDni());
