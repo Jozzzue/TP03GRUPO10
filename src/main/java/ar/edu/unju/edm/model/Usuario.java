@@ -2,7 +2,8 @@ package ar.edu.unju.edm.model;
 
 import java.time.LocalDate;
 
-
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
+@Entity
 @Component
 public class Usuario {
 
@@ -33,6 +35,7 @@ public class Usuario {
 	@NotEmpty(message="El nombre no puede estar vacio")
 	private String nombre;
 	
+	@Id
 	@Min(value=1000000, message="El dni debe ser mayor a 1.000.000")
 	@Max(value=99999999, message="El dni debe ser menor a 99.999.999")
 	private int dni;

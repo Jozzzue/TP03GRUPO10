@@ -10,11 +10,22 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
 @Component 
+
+@Entity
 public class Curso {
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id
 	private int id;
 	@Size(min=3, max=100, message="EL nombre debe tener 3 caracteres minimo, maximo 100")
 	@NotBlank(message="El nombre no puede ser espacios en blanco")
@@ -22,6 +33,7 @@ public class Curso {
 	private String nombre;
 	@Size(min=0, max=200, message="La descripcion debe tener maximo 100 caracteres")
 	@NotBlank(message="La descripcion no puede ser espacios en blanco")
+	@Column(name="d")
 	private String descripcion;
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate fechainicio;

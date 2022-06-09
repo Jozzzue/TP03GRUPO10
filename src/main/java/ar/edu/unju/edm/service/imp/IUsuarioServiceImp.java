@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.unju.edm.controller.UsuarioController;
 import ar.edu.unju.edm.model.Usuario;
+import ar.edu.unju.edm.repository.UsuarioRepository;
 import ar.edu.unju.edm.service.IUsuarioService;
 import ar.edu.unju.edm.until.ListaUsuario;
 
@@ -21,54 +22,68 @@ public class IUsuarioServiceImp implements IUsuarioService{
 	@Autowired
 	ListaUsuario lista;
 	
+	@Autowired
+	UsuarioRepository usuarioRepository;
+	
 	@Override
 	public void guardarUsuario(Usuario usuario) {
 		// TODO Auto-generated method stub
 		usuario.setEstado(true);
-		lista.getListado().add(usuario);
+		// lista.getListado().add(usuario);
+		usuarioRepository.save(usuario);
 	}
 
 	@Override
-	public void eliminarUsuario(int id) {
+	public void eliminarUsuario(int id) throws Exception {
 		// TODO Auto-generated method stub		
-		for (int i = 0; i < lista.getListado().size(); i++) {			
+		/*for (int i = 0; i < lista.getListado().size(); i++) {			
 			if (lista.getListado().get(i).getDni()==id) {				
 				lista.getListado().get(i).setEstado(false);		
 			}            
-        }		
+        }	*/	
+		Usuario auxiliar =new Usuario();
+		auxiliar=buscarUsuario(id);
+		auxiliar.setEstado(false);
+		usuarioRepository.save(auxiliar);
 	}
 
 	@Override
 	public void modificarUsuario(Usuario usuario) {
 		// TODO Auto-generated method stub
 		
-		for (int i = 0; i < lista.getListado().size(); i++) {			
+		/*for (int i = 0; i < lista.getListado().size(); i++) {			
 			if (lista.getListado().get(i).getDni() == usuario.getDni()) {
 				LOGGER.error("encontrando: usuario"+i);
 				lista.getListado().set(i, usuario);			
 			}            
-        }
+        }*/
+		usuarioRepository.save(usuario);
 	}
 
 	@Override
 	public List<Usuario> listarUsuarios() {
 		// TODO Auto-generated method stub
 		List<Usuario> auxiliar = new ArrayList<>();
-		LOGGER.info("ingresando al metodo arraylist: listar usuarios");
+		List<Usuario> auxiliar2 = new ArrayList<>();
+		/*LOGGER.info("ingresando al metodo arraylist: listar usuarios");
 		for (int i = 0; i < lista.getListado().size(); i++) {
 			
 			if (lista.getListado().get(i).getEstado()==true) {
 				auxiliar.add(lista.getListado().get(i));
 				LOGGER.error("recorriendo arraylist: usuarios "+lista.getListado().get(i).getDni());
 			}            
-        }
-		return auxiliar;
-	}
-
-	
+        }*/
+		auxiliar=(List<Usuario>) usuarioRepository.findAll();
+		for(int i = 0 ;i<auxiliar.size();i++) {
+		if (auxiliar.get(i).getEstado()==true) {
+			auxiliar2.add(auxiliar.get(i));
+		}
+	}	
+	return auxiliar2;
+}
 
 	@Override
-	public Usuario buscarUsuario(int id) {
+	public Usuario buscarUsuario(int id) throws Exception {
 		// TODO Auto-generated method stub
 		Usuario usuarioEncontrado = new Usuario();
 		for (int i = 0; i < lista.getListado().size(); i++) {
@@ -76,6 +91,7 @@ public class IUsuarioServiceImp implements IUsuarioService{
 				usuarioEncontrado = lista.getListado().get(i);		
 			}            
         }
+		usuarioEncontrado=usuarioRepository.findById(id).orElseThrow(()->new Exception("usuario no encontrado"));
 		return usuarioEncontrado;
 	}
 

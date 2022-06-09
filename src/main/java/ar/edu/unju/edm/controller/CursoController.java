@@ -86,9 +86,15 @@ public class CursoController {
 		
 		// modificar curso
 		@RequestMapping("/editeCourse/{id}")
-		public ModelAndView modCourse(@PathVariable(name="id") int id) throws Exception { 
+		public ModelAndView modCourse(Model model, @PathVariable(name="id") int id) throws Exception { 
 			Curso coursetomod = new Curso();
-			coursetomod = cursoService.buscarCurso(id);
+			try {
+				coursetomod = cursoService.buscarCurso(id);
+			}
+			catch(Exception e) {
+				model.addAttribute("formCourseMessage", e.getMessage());
+			}
+			//coursetomod = cursoService.buscarCurso(id);
 			ModelAndView coursemod = new ModelAndView("cargarcurso");
 		    coursemod.addObject("curso", coursetomod);
 		    LOGGER.error("saliendo del metodo: modCourse "+ coursetomod.getNombre());
